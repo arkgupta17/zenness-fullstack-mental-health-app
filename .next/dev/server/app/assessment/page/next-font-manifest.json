@@ -1,0 +1,16 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/app/assessment/page": [
+      "static/media/Ranade_Regular-s.p.72f2ccaf.woff2",
+      "static/media/Ranade_Italic-s.p.ab4b0068.woff2",
+      "static/media/Ranade_Medium-s.p.264f1476.woff2",
+      "static/media/Ranade_Bold-s.p.c7a6b85e.woff2",
+      "static/media/Ranade_BoldItalic-s.p.dc48ed5b.woff2",
+      "static/media/Ranade_Light-s.p.1686f2ef.woff2",
+      "static/media/Ranade_LightItalic-s.p.00591d9c.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

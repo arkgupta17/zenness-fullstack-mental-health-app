@@ -1,0 +1,54 @@
+/* [project]/app/clashdisplay_f8e267ef.module.css [app-client] (css) */
+@font-face {
+  font-family: clashDisplay;
+  src: url("../media/ClashDisplay_Light-s.p.75c04e1b.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: clashDisplay;
+  src: url("../media/ClashDisplay_Regular-s.p.8d84835b.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: clashDisplay;
+  src: url("../media/ClashDisplay_Medium-s.p.bce5a8f2.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: clashDisplay;
+  src: url("../media/ClashDisplay_Semibold-s.p.f188b517.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: clashDisplay;
+  src: url("../media/ClashDisplay_Bold-s.p.9137c724.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: clashDisplay Fallback;
+  src: local(Arial);
+  ascent-override: 83.42%;
+  descent-override: 23.43%;
+  line-gap-override: 8.44%;
+  size-adjust: 106.69%;
+}
+
+.clashdisplay_f8e267ef-module__LFRaoa__className {
+  font-family: clashDisplay, clashDisplay Fallback;
+}
+
+.clashdisplay_f8e267ef-module__LFRaoa__variable {
+  --font-clash: "clashDisplay", "clashDisplay Fallback";
+}
+
+/*# sourceMappingURL=app_clashdisplay_f8e267ef_module_css_bad6b30c._.single.css.map*/
