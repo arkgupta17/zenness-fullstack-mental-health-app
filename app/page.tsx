@@ -11,6 +11,12 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const { setIsOpen } = useChatbot();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+  setIsLoggedIn(!!token);
+ }, []);
   
   useEffect(() => {
     setIsVisible(true)
@@ -60,23 +66,48 @@ export default function Home() {
   </span>
 </Link>
 
-
-
-
           
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-1">
-            {navItems.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-300 relative group"
-              >
-                {item.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-lime-500 group-hover:w-full transition-all duration-300 rounded-full" />
-              </Link>
-            ))}
-          </div>
+  {/* Desktop Menu */}
+  <div className="hidden md:flex items-center gap-3">
+  {/* Nav links */}
+  {navItems.map(item => (
+    <Link
+      key={item.href}
+      href={item.href}
+      className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-300"
+    >
+      {item.label}
+    </Link>
+  ))}
+
+  {/* Auth Buttons */}
+  {!isLoggedIn ? (
+    <>
+      <Link href="/login">
+        <button className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition">
+          Login
+        </button>
+      </Link>
+
+      <Link href="/signup">
+        <button className="px-4 py-2 text-sm font-medium bg-lime-400 text-black rounded-lg hover:bg-lime-500 transition">
+          Sign Up
+        </button>
+      </Link>
+    </>
+  ) : (
+    <button
+      onClick={() => {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        window.location.href = "/";
+      }}
+      className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+    >
+      Logout
+    </button>
+  )}
+</div>
 
           {/* Mobile Menu Button */}
           <button
@@ -117,10 +148,15 @@ export default function Home() {
               Your mental health matters. Taking care of it is one of the best investments you can make. Start a quick assessment to understand your well-being.
             </p>
             <Button 
-              onClick={() => {
-                window.location.href = '/assessment'
-              }}
-              className="bg-gradient-to-r from-lime-300 to-blue-300 text-whiterounded-full px-8 py-6 text-base font-semibold transition-all duration-300 hover:shadow-lg hover:scale-108"
+             onClick={() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+    } else {
+      window.location.href = "/assessment";
+    }
+  }}
+              className="bg-gradient-to-r from-lime-300 to-blue-300 text-white rounded-full px-8 py-6 text-base font-semibold transition-all duration-300 hover:shadow-lg hover:scale-108"
             >
               Take Assessment
             </Button>

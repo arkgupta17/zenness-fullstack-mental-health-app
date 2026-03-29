@@ -2,15 +2,25 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
+
+
 
 export default function AssessmentPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const router = useRouter();
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+  }
+}, []);
 
   const questions = [
   {
@@ -144,11 +154,16 @@ export default function AssessmentPage() {
   });
 
   // Send to backend
+  const token = localStorage.getItem("token");
+
   const response = await fetch("http://127.0.0.1:8000/predict", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formattedAnswers),
-  });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify(formattedAnswers),
+});
 
   const data = await response.json();
 
@@ -280,3 +295,35 @@ export default function AssessmentPage() {
     </main>
   )
 }
+
+export function SignupPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const signup = async () => {
+    await fetch("http://127.0.0.1:8000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    alert("User created");
+  };
+
+  return (
+    <div>
+      <h2>Signup</h2>
+
+      <input onChange={(e) => setUsername(e.target.value)} />
+      <br />
+      <input type="password" onChange={(e) => setPassword(e.target.value)} />
+      <br />
+
+      <button onClick={signup}>Signup</button>
+    </div>
+  );
+}
+
+

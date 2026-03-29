@@ -73,7 +73,7 @@ export default function ResultPage() {
           { icon: Heart, title: 'Take Time Off & Reset', desc: 'Step away from work and focus on calm, grounding exercises for recovery.' }
         ]
 
-  /* HELPLINE CARD (also typed) */
+  /* HELPLINE CARD */
   const helplineCard: Rec = {
     icon: Phone,
     title: "24/7 Mental Health Helpline",

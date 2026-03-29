@@ -1,18 +1,29 @@
 import joblib
-from fastapi import FastAPI
-from pydantic import BaseModel
 import numpy as np
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+from jose import jwt, JWTError
+from auth import hash_password, verify_password, create_access_token, SECRET_KEY, ALGORITHM
+
 
 app = FastAPI()
+
+# CORS
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # for development
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Auth setup
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+fake_db = {}
+
 # Load your trained model
 model = joblib.load("model.pkl")
 
@@ -50,10 +61,16 @@ def scale_up(value, max_original):
     """Scale 0–5 value to 0–max_original"""
     return (value / 5) * max_original
 
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("sub")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @app.post("/predict")
-def predict(data: AssessmentInput):
-
+def predict(data: AssessmentInput, user: str = Depends(get_current_user)):
+    print("User:", user)
     #SCALE UP ORIGINAL INPUTS
     anxiety = scale_up(data.anxiety_level, SCALING["anxiety_level"])
     esteem = scale_up(data.self_esteem, SCALING["self_esteem"])
@@ -93,3 +110,31 @@ def predict(data: AssessmentInput):
     prediction = model.predict(values)[0]
 
     return {"stress_level": int(prediction)}
+
+class UserSignup(BaseModel):
+    username: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/signup")
+def signup(data: UserSignup):
+    if data.username in fake_db:
+        raise HTTPException(status_code=400, detail="User exists")
+
+    fake_db[data.username] = hash_password(data.password)
+    return {"message": "User created"}
+
+@app.post("/login")
+def login(data: UserLogin):
+    user = fake_db.get(data.username)
+
+    if not user or not verify_password(data.password, user):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"sub": data.username})
+    return {"access_token": token}
+
