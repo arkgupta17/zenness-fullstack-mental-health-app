@@ -8,6 +8,7 @@ from auth import hash_password, verify_password, create_access_token, SECRET_KEY
 from database import engine, Base, SessionLocal
 import models
 from models import User
+import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,7 +30,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 fake_db = {}
 
 # Load your trained model
-model = joblib.load("model.pkl")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, "model.pkl")
+
+model = joblib.load(model_path)
 
 # Scaling dictionary — scale 0–5 back to original ranges
 SCALING = {
