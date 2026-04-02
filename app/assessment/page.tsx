@@ -156,7 +156,7 @@ useEffect(() => {
   // Send to backend
   const token = localStorage.getItem("token");
 
-  const response = await fetch("http://127.0.0.1:8000/predict", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -301,7 +301,7 @@ export function SignupPage() {
   const [password, setPassword] = useState("");
 
   const signup = async () => {
-    await fetch("http://127.0.0.1:8000/signup", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

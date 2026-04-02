@@ -56,7 +56,7 @@ useEffect(() => {
 useEffect(() => {
   const token = localStorage.getItem("token");
 
-  fetch("http://127.0.0.1:8000/history", {
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}/history`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
