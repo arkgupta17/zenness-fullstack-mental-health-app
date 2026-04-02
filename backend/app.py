@@ -5,7 +5,10 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from jose import jwt, JWTError
 from auth import hash_password, verify_password, create_access_token, SECRET_KEY, ALGORITHM
+from database import engine, Base
+import models
 
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -68,8 +71,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+from models import Assessment
 @app.post("/predict")
 def predict(data: AssessmentInput, user: str = Depends(get_current_user)):
+    db = SessionLocal()
     print("User:", user)
     #SCALE UP ORIGINAL INPUTS
     anxiety = scale_up(data.anxiety_level, SCALING["anxiety_level"])
@@ -109,6 +114,14 @@ def predict(data: AssessmentInput, user: str = Depends(get_current_user)):
 
     prediction = model.predict(values)[0]
 
+    record = Assessment(
+        username=user,
+        stress_level=int(prediction)
+    )
+
+    db.add(record)
+    db.commit()
+
     return {"stress_level": int(prediction)}
 
 class UserSignup(BaseModel):
@@ -120,21 +133,49 @@ class UserLogin(BaseModel):
     password: str
 
 
+from database import SessionLocal
+from models import User
+
 @app.post("/signup")
 def signup(data: UserSignup):
-    if data.username in fake_db:
+    db = SessionLocal()
+
+    existing = db.query(User).filter(User.username == data.username).first()
+    if existing:
         raise HTTPException(status_code=400, detail="User exists")
 
-    fake_db[data.username] = hash_password(data.password)
+    user = User(
+        username=data.username,
+        password=hash_password(data.password)
+    )
+
+    db.add(user)
+    db.commit()
+
     return {"message": "User created"}
 
 @app.post("/login")
 def login(data: UserLogin):
-    user = fake_db.get(data.username)
+    db = SessionLocal()
 
-    if not user or not verify_password(data.password, user):
+    user = db.query(User).filter(User.username == data.username).first()
+
+    if not user or not verify_password(data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"sub": data.username})
+    token = create_access_token({"sub": user.username})
+    
+
     return {"access_token": token}
+
+@app.get("/history")
+def get_history(user: str = Depends(get_current_user)):
+    db = SessionLocal()
+
+    records = db.query(Assessment).filter(Assessment.username == user).all()
+
+    return [
+        {"stress_level": r.stress_level}
+        for r in records
+    ]
 
