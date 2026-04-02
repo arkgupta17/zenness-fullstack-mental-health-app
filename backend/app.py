@@ -5,8 +5,9 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from jose import jwt, JWTError
 from auth import hash_password, verify_password, create_access_token, SECRET_KEY, ALGORITHM
-from database import engine, Base
+from database import engine, Base, SessionLocal
 import models
+from models import User
 
 Base.metadata.create_all(bind=engine)
 
@@ -132,9 +133,6 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
-
-from database import SessionLocal
-from models import User
 
 @app.post("/signup")
 def signup(data: UserSignup):
