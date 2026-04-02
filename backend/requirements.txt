@@ -6,3 +6,6 @@ passlib[bcrypt]
 bcrypt
 joblib
 numpy
+scikit-learn
+python-multipart
+pydantic
