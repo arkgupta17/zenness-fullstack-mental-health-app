@@ -67,8 +67,8 @@ export default function Home() {
 </Link>
 
           
-  {/* Desktop Menu */}
-  <div className="hidden md:flex items-center gap-3">
+<div className="hidden md:flex items-center gap-3">
+
   {/* Nav links */}
   {navItems.map(item => (
     <Link
@@ -80,34 +80,46 @@ export default function Home() {
     </Link>
   ))}
 
-  {/* Auth Buttons */}
+  {/* Auth Section */}
   {!isLoggedIn ? (
-    <>
+    <div className="flex items-center gap-2.5">
       <Link href="/login">
-        <button className="px-4 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition">
+        <button className="px-6 py-2 text-sm font-medium text-foreground/70 hover:text-foreground border border-border/50 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-colors duration-300">
           Login
         </button>
       </Link>
 
       <Link href="/signup">
-        <button className="px-4 py-2 text-sm font-medium bg-lime-400 text-black rounded-lg hover:bg-lime-500 transition">
+        <button className="px-6 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
           Sign Up
         </button>
       </Link>
-    </>
+    </div>
   ) : (
-    <button
-      onClick={() => {
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
-        window.location.href = "/";
-      }}
-      className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-    >
-      Logout
-    </button>
+    <div className="flex items-center gap-2.5">
+      
+      <Link
+        href="/dashboard"
+        className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-300"
+      >
+        Dashboard
+      </Link>
+
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          window.location.href = "/";
+        }}
+        className="px-6 py-2 text-sm font-medium text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/5 hover:border-destructive/40 transition-colors duration-300"
+      >
+        Logout
+      </button>
+    </div>
   )}
 </div>
+
+
 
           {/* Mobile Menu Button */}
           <button
@@ -155,11 +167,11 @@ export default function Home() {
     } else {
       window.location.href = "/assessment";
     }
-  }}
-              className="bg-gradient-to-r from-lime-300 to-blue-300 text-white rounded-full px-8 py-6 text-base font-semibold transition-all duration-300 hover:shadow-lg hover:scale-108"
-            >
-              Take Assessment
-            </Button>
+  }}           
+className="inline-flex items-center justify-center gap-2 whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-sky-200 border border-sky-200 bg-sky-50/80 hover:bg-sky-100 backdrop-blur-sm h-10 px-8 py-6 text-base font-medium tracking-wide text-sky-700 rounded-full transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-sky-200/50 active:scale-[0.98]"
+>
+  Take Assessment
+</Button>
           </div>
           <div className="flex justify-center">
   <div
