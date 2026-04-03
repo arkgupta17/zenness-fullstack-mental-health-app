@@ -10,11 +10,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Hash password
 def hash_password(password: str):
-    return pwd_context.hash(password[:72])
+    password_bytes = password.encode('utf-8')[:72]
+    return pwd_context.hash(password_bytes)
 
 # Verify password
 def verify_password(plain, hashed):
-    return pwd_context.verify(plain[:72], hashed)
+    plain_bytes = plain.encode('utf-8')[:72]
+    return pwd_context.verify(plain_bytes, hashed)
 
 # Create token
 def create_access_token(data: dict):
