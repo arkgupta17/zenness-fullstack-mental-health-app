@@ -1,7 +1,8 @@
 import joblib
 import numpy as np
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from jose import jwt, JWTError
 from auth import hash_password, verify_password, create_access_token, SECRET_KEY, ALGORITHM
@@ -17,16 +18,42 @@ app = FastAPI()
 # CORS
 from fastapi.middleware.cors import CORSMiddleware
 
+ALLOWED_ORIGINS = [
+    "https://zenness.vercel.app",
+    "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://zenness.vercel.app",
-        "http://localhost:3000",  # for local development
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Ensure CORS headers are present even on error responses
+def get_cors_origin(request: Request) -> str:
+    origin = request.headers.get("origin", "")
+    return origin if origin in ALLOWED_ORIGINS else ALLOWED_ORIGINS[0]
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers={"Access-Control-Allow-Origin": get_cors_origin(request),
+                 "Access-Control-Allow-Credentials": "true"},
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+        headers={"Access-Control-Allow-Origin": get_cors_origin(request),
+                 "Access-Control-Allow-Credentials": "true"},
+    )
+
 
 # Auth setup
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
